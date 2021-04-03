@@ -1,0 +1,232 @@
+---
+title: "Handout_12"
+output: html_notebook
+Student: Carlos Diaz
+---
+
+
+
+```{r}
+data<-read.csv("quiz2.csv",header = TRUE,sep = ",")
+data
+
+#############################################################################
+
+# Reading the data from working folder 
+#############################################################################
+```
+
+
+```{r}
+summary(data)
+
+#############################################################################
+
+# Taking a look at the data 
+#############################################################################
+
+```
+
+
+```{r}
+str(data)
+```
+
+```{r}
+head(data)
+```
+
+
+```{r}
+model1<-lm(infections~income+pop,data = data)
+summary(model1)
+
+#############################################################################
+
+# Running the first model infections Vs income plus the population. 
+# in this model it does seem the variables have a lot of significance by themselves 0.13 and 0.09 respectively, way beyond the 0.05 alpha. Overall, the P-value of the system has a 0.001 of p-value significance. 
+
+
+#############################################################################
+
+
+```
+
+
+```{r}
+confint(model1)
+
+#############################################################################
+
+# Here, the code is to get the confident intervals of 2.5 and 97.5% respectively. 
+#############################################################################
+```
+
+Let us proceed to remove regions and subregions and test for multicolinearility. 
+
+
+```{r}
+data1<-data[,c(3,4,5,6,7)]
+View(data1)
+
+#############################################################################
+
+#This is to removel the subregions and test for multicolinearity 
+#############################################################################
+
+```
+
+
+```{r}
+cor.data<-cor(data1)
+cor.data
+
+#############################################################################
+
+# Here, they are getting the correlation matrix. 
+#############################################################################
+
+```
+
+
+```{r}
+install.packages("Correlplot")
+
+#############################################################################
+
+# installing package plotting correlation.
+#############################################################################
+```
+
+```{r}
+library(corrplot)
+#############################################################################
+
+# Calling the library
+#############################################################################
+
+```
+
+```{r}
+corrplot(cor.data,method = "ellipse")
+
+#############################################################################
+
+# Getting correlation of the data using the method eclipse. Here we can observe the darker the eclipse the more correlation there is between the variables. 
+#############################################################################
+
+```
+
+**Visualization methods in corrplot**
+
+There are seven visualization methods (parameter method) in corrplot package, named "circle", "square", "ellipse", "number", "shade", "color", "pie".
+
+Positive correlations are displayed in blue and negative correlations in red color. Color intensity and the size of the circle are proportional to the correlation coefficients.
+
+
+
+Let us now proceed to install the leap package in order to do further analysis of the model. 
+
+
+```{r}
+install.packages("leaps")
+library("leaps")
+
+#############################################################################
+
+# Adding a new library called leaps. 
+#############################################################################
+
+
+```
+
+
+```{r}
+model2<-lm(infections~.,data = data1)
+summary(model2)
+
+#############################################################################
+
+# Running a second model infections Vs all the data in the dataset. We can observe that all the variables are over the 0.05 alpha thereshold and overall the system is 0.006 for the P-value and the R2 is 43.7%. Not a good model for the data. 
+#############################################################################
+
+
+```
+
+Let us proceed to use regsubsets (a function for model selection)
+
+```{r}
+submodel2<-regsubsets(infections~.,data = data1)
+best.summary<-summary(submodel2)
+
+#############################################################################
+
+# Here, they re using the formula of subsets of infections Vs all the data. 
+#############################################################################
+
+```
+
+
+
+```{r}
+names(best.summary)
+```
+
+
+
+
+```{r}
+which.min(best.summary$rss)
+
+#############################################################################
+
+#Getting the mininum number of the summmary to plot.  
+#############################################################################
+
+```
+
+
+```{r}
+par(mfrow=c(1,2))
+```
+
+
+```{r}
+plot(best.summary$cp,xlab = "number of features",ylab = "cp")
+```
+
+
+```{r}
+which.min(best.summary$bic)
+```
+
+
+
+```{r}
+which.max(best.summary$adjr2)
+```
+
+
+```{r}
+bestsummary.fit1<-lm(infections~income+ufo2010,data = data1)
+```
+
+
+
+```{r}
+summary(bestsummary.fit1)
+#############################################################################
+
+# The last model it seems that none of the variables are significant against the infections variable.  
+#############################################################################
+```
+
+Make a decision that you think can help us get the best results out of this 
+
+#############################################################################
+
+# One of the variables could be dropped and re-run the system. I would drop income, since it seems to be further in the variations. 
+#############################################################################
+
+
+

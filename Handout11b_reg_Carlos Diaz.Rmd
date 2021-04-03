@@ -1,0 +1,277 @@
+---
+title: "Handout_11_Reg"
+output: html_notebook
+Student: Carlos Diaz
+---
+
+---
+title: "Handout_11_reg"
+output: html_notebook
+---
+
+
+
+
+```{r}
+getwd()
+```
+
+
+
+```{r}
+# make sure the packages for this chapter
+# are installed, install if necessary
+pkg <- c("ggplot2", "scales", "maptools",
+              "sp", "maps", "grid", "car" )
+new.pkg <- pkg[!(pkg %in% installed.packages())]
+if (length(new.pkg)) {
+  install.packages(new.pkg)  
+}
+
+#############################################################################
+
+# adding gg plot to this handout. 
+#############################################################################
+```
+
+
+
+```{r}
+# read the CSV with headers
+regression1<-read.csv("incidents.csv", header=T,sep =",")
+
+#############################################################################
+
+# Reading the file incidents from downloads folder. 
+#############################################################################
+
+```
+
+
+
+```{r}
+View(regression1)
+
+
+#############################################################################
+
+# Viewing the file. 
+#############################################################################
+
+```
+
+
+
+```{r}
+summary(regression1)
+
+
+#############################################################################
+
+# Taking a look at the file to see the data.  
+#############################################################################
+
+```
+
+
+```{r}
+str(regression1)
+
+
+#############################################################################
+
+# Taking a look at the file to see the data.  
+#############################################################################
+```
+
+
+```{r}
+regression1$population <- as.numeric(gsub(",","",regression1$population))
+regression1$population
+
+
+#############################################################################
+
+# Applying function to column population gsub (replaces all matches of a string, if the parameter is a string vector, returns a string vector of the same length and with the same attributes (after possible coercion to character) and saving it in a variable.  
+#############################################################################
+
+
+
+```
+
+```{r}
+str(regression1$population)
+```
+
+
+```{r}
+regression2<-regression1[,-1]#new data frame with the deletion of column 1 
+
+#############################################################################
+
+# Getting a new data frame and deleting the first column. 
+#############################################################################
+
+```
+
+
+
+```{r}
+head(regression2)
+
+#############################################################################
+
+# Looking how the data looks after deleting the column. 
+#############################################################################
+
+```
+
+```{r}
+View(regression2)
+```
+
+
+
+```{r}
+str(regression1)
+```
+
+
+
+```{r}
+reg.fit1<-lm(regression1$incidents ~ regression1$population)
+
+#############################################################################
+
+# Applying the linear model regression on the column incidents and column population 
+#############################################################################
+```
+
+
+
+
+
+```{r}
+summary(reg.fit1)
+#############################################################################
+
+# Looking at the regression 
+
+#############################################################################
+```
+
+
+```{r}
+reg.fit2<-lm(incidents ~ zone+population, data = regression1)
+
+#############################################################################
+
+# Applying the linear model regression on the column incidents and columns population and zone and saving it on variable reg.fit2. 
+#############################################################################
+
+```
+
+
+
+```{r}
+summary(reg.fit2)
+```
+
+
+
+```{r}
+regression1$zone <- ifelse(regression1$zone == "west", 1, 0)
+
+#############################################################################
+
+# In this code applying a conditional to column zone of regression file. To bring all values of West to a new varianble as 1 otherwise, bring the value as 0.  
+#############################################################################
+```{r}
+View(regression1)
+```
+
+
+
+```{r}
+str(regression1)
+```
+
+
+```{r}
+#regression1$zone<-as.integer((regression1$zone),replace=TRUE) was not necessary
+
+#############################################################################
+
+# This is a comment and they did not run it. 
+#############################################################################
+```
+
+
+
+
+
+```{r}
+interaction<-regression1$zone*regression1$population
+#############################################################################
+
+# In this code they are getting an interaction value by multiplying zone by population.  
+#############################################################################
+
+
+```
+
+```{r}
+View(interaction)
+```
+
+
+```{r}
+reg.fit3<-lm(regression1$incidents~interaction+regression1$population+regression1$zone)
+
+#############################################################################
+
+# In this code they are running a linear model in order to fit the data of incidents Vs interactions plus population and zone in the population regression. 
+#####################################################################################
+
+
+```
+
+
+
+```{r}
+summary(reg.fit3)
+
+
+#############################################################################
+
+# The model does not seem to have a very good P-values over 0.05 alpha and overall the Rsquared is over 50%, therefore, they decided to run the model one more time but dropping a variable. 
+#############################################################################
+
+
+```
+
+```{r}
+reg.fit4<-lm(regression1$incidents~interaction)
+
+#############################################################################
+
+#this model they are running the incidents Vs the interactions. 
+
+###################################################################
+
+
+
+```
+
+
+```{r}
+summary(reg.fit4)
+
+#############################################################################
+
+# In this model, the data seems to fit better in the model. The interaction seems to have a better P-value at 0.01, which is significant at 0.05 alpha and the Rsquared is on the 38%.  
+#############################################################################
+
+```
+
+

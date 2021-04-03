@@ -1,0 +1,141 @@
+---
+title: "Handout 7"
+output: html_notebook
+Student: Carlos Diaz
+
+---
+Please let us use this handout to discuss Associations /Correlations. I would like you to make comments as you run the code we have listed in this handout. In your submission file you should include commments that show a clear understanding of the correlation concept.
+
+```{r}
+mfrow <- par()$mfrow
+mar <- par()$mar
+oma <- par()$oma
+
+#####################################################################
+
+#here the function par() will prepare the data frames for graphical parameters. 
+
+##########################################################
+
+
+```
+
+
+
+```{r}
+par(mfrow=c(2, 3), mar=c(0, 0, 2, 0), oma=c(1, 1, 1, 1))
+set.seed(2)
+x <- runif(500, min=0, max=pi)
+
+#####################################################################
+
+#previous code is in order to delimit the data frame and run 500 random points.  
+
+##########################################################
+```
+
+
+
+
+```{r}
+y <- rnorm(500, mean=x, sd=0.2)
+plot(x,y, pch=19, cex=.8, col="#666699CC", axes=FALSE, xlab="", ylab="", 
+     main=paste("Designation: ", round(cor(x,y), 2)))
+
+
+#####################################################################
+
+#previous code is in order to delimit the data frame and run 500 random but following normality points. There is specific code for no labels. The code also runs a correlation (that is also being rounded) between variables "x" and "y' that is in this case there are labeling as "designation". 
+
+##########################################################
+```
+
+#################################################################################
+
+
+#here we find a positive correlation between the two variables. One of the variables increases as the other increases as well in tandem.
+
+#############################################################################
+```
+
+Make comments about the output as well as the syntax related to the chunk ran above.
+
+```{r}
+y <- rnorm(500, mean=-x, sd=0.3)
+plot(x,y, pch=19, cex=.8, col="#666699CC", axes=FALSE, xlab="", ylab="", 
+     main=paste("Correlation: ", round(cor(x,y), 2)))
+     
+####################################################################################
+
+#There is a negative or inverse correlation in this plot. One variable decreases as the other increases. This is an example of negative correlation. 
+
+#####################################################################################
+     
+     
+```
+
+
+```{r}
+y <- rnorm(500, mean=sin(x), sd=0.2)
+plot(x,y, pch=19, cex=.8, col="#666699CC", axes=FALSE, xlab="", ylab="", 
+     main=paste("Correlation: ", round(cor(x,y), 2)))
+
+########################################################################################
+
+#this is an example of non linear relationship between two variables or an example of curvelinear relationship. 
+
+########################################################################################
+
+
+```
+
+
+
+
+```{r}
+y <- rnorm(500, mean=x, sd=2)
+plot(x,y, pch=19, cex=.8, col="#666699CC", axes=FALSE, xlab="", ylab="", 
+     main=paste("Correlation: ", round(cor(x,y), 2)))
+     
+###################################################################################
+
+#this might be an example of a very small positive correlation between two variables. Some outliers are observed but it does appear as an positive outward but small correlation.
+
+#################################################################################
+     
+```
+
+
+
+```{r}
+y <- rnorm(500, mean=-x, sd=1)
+plot(x,y, pch=19, cex=.8, col="#666699CC", axes=FALSE, xlab="", ylab="", 
+     main=paste("Correlation: ", round(cor(x,y), 2)))
+     
+##################################################################################
+ #this might be an example of a very small negative correlation between two variables. Some outliers are observed but it does appear as an negative downward but small correlation.
+ 
+ 
+################################################################################   
+     
+```
+
+
+
+```{r}
+y <- runif(500, min=0, max=pi)
+plot(x,y, pch=19, cex=.8, col="#666699CC", axes=FALSE, xlab="", ylab="", 
+     main=paste("Correlation: ", round(cor(x,y), 2)))
+     
+################################################################################
+# this scatterplot does not seem to have a linear trend (either positive or negative). This is possible a zero correlation or near zero correlation plot. 
+
+
+################################################################################
+     
+```
+
+
+
+
+

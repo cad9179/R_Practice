@@ -1,0 +1,478 @@
+---
+title: "First Steps in `R`"
+output: html_notebook
+Name: Carlos A. Diaz
+---
+
+# Basic calculations
+
+You can use R for basic computations you would perform in a calculator
+
+```{r}
+# Addition
+56223+8953
+# Division
+4658/89
+# Exponentiation
+23^6
+# Square root
+sqrt(121)
+# Logarithms
+log(56)
+```
+
+Often you will want to test whether something is less than, greater than or equal to something.
+
+```{r}
+19 == 150
+456 != 78946
+2 <= 789
+```
+
+The _logical operators_ are `&` for logical **AND**, `|` for logical **OR**, and `!` for **NOT**. These are some examples:
+
+```{r}
+# Logical Disjunction (or) 
+#FALSE | FALSE
+#example of comparing two lists
+c(0, 0) | c(0, 0)
+
+# Logical Conjunction (and)
+TRUE & FALSE
+
+#example
+x <- c(TRUE,2+3i)
+t <- c(FALSE,2+3i)
+print(x&t)
+
+# Negation
+#! FALSE
+2 != 2
+
+# Combination of statements
+2500 < 4000 | 500 == 9000
+```
+
+# Assigning Values to Variables
+
+
+In R, you create a variable and assign it a value using `<-` as follows
+
+```{r}
+#assigning variable and doing complex operation
+dog1<-sin(((sqrt(56))*9))/2.5
+(dog1*4)/0.5
+
+```
+
+
+To see the variables that are currently defined, use `ls` (as in "list")
+
+```{r}
+#this fucntion is to see the lists that are assigned in this document. 
+
+ls()
+
+#will give as output the variable "dog1" defined in the last step. 
+```
+
+To delete a variable, use `rm ` (as in "remove")
+
+```{r}
+#this function will delete the variable "dog1" previously defined. 
+
+rm(dog1)
+```
+
+Either `<-` or `=` can be used to assign a value to a variable, but I prefer `<-` because is less likely to be confused with the logical operator `==`
+
+# Vectors
+
+The basic type of object in R is a _vector_, which is an ordered list of values of the same type. You can create a vector using the `c()` function (as in "concatenate").
+
+```{r}
+bar <- c(2, 5, 10, 2, 1) 
+bar
+
+#creating vectors
+vec1<-c(5,8,9,7,5,6,1,2,45,45,89,8,9,9,2,1,8,9,8)
+vec1
+
+```
+
+```{r}
+baz <- c(2, 2, 3, 3, 3)
+baz
+
+#another vector example
+
+vec2<-c(1,9,8,6,5,4,5,8,9,5,6,74,3,2,5,6,5,4,8)
+vec2
+
+```
+
+
+There are also some functions that will create vectors with regular patterns, like repeated elements. 
+
+```{r}
+# replicate function
+rep(2, 5)
+
+#this function replicates the number 15, 10 times. 
+
+rep(15,10)
+
+# consecutive numbers
+1:5
+
+#count consecutive numbers, from 100 to number 2
+100:2
+
+# sequence from 1 to 10 with a step of 2
+seq(1, 10, by=2)
+
+#sequence from 1 to 91 in tenths
+seq(1, 100, by=10)
+
+ls()
+```
+
+Many functions and operators like `+` or `-` will work on all elements of the vector.
+
+```{r}
+# add vectors
+bar + baz
+
+#adding previous vectors from steps above
+vec1 + vec2
+
+# compare vectors
+bar == baz
+
+#comparing previous set vectors
+
+vec1==vec2
+
+# find length of vector
+length(bar)
+
+#fiding the lengths of the vectors
+length(vec1)
+length(vec2)
+
+
+# find minimum value in vector
+min(bar)
+#finding minimun values in the vectors
+
+min(vec1)
+min(vec2)
+
+
+
+
+# find average value in vector
+mean(bar)
+
+#finding the average/mean in the vectors
+
+mean(vec1)
+mean(vec2)
+
+```
+
+You can access parts of a vector by using `[`. Recall what the value is of the vector `bar`.
+
+```{r}
+bar
+
+#recalling the vector
+vec2
+
+# If you want to get the first element:
+bar[1]
+
+#getting the second element of the vector. 
+vec2[2]
+
+```
+
+
+If you want to get the last element of `bar` without explicitly typing the number of elements of `bar`, make use of the `length` function, which calculates the length of a vector:
+
+```{r}
+bar[length(bar)]
+
+#calculating the lenght of the vector and getting the last element
+
+vec2[length(vec2)]
+
+
+
+```
+
+
+You can also extract multiple values from a vector. For instance to get the 2nd through 4th values use
+
+```{r}
+bar[c(2, 3, 4)]
+
+#extracting multiple values of the vectors
+vec1[c(1,5,10)]
+vec2[c(4,9,10)]
+
+```
+
+
+Vectors can also be strings or logical values
+
+```{r}
+quxx <- c("a", "b", "cde", "fg")
+
+
+#creating a vector with only strings
+
+string1 <- c("train", "PC", "car", "truck", "coffee", "sugar", "pen", "pencil")
+
+vec1
+vec2
+
+```
+
+
+# Data Frames
+
+In statistical applications, data is often stored as a data frame, which is like a spreadsheet, with _rows as observations_ and _columns as variables_.
+
+To manually create a data frame, use the `data.frame()` function.
+
+```{r}
+data.frame(foo = c(1, 2, 3), 
+           bar = c("a", "b", "c"), 
+           baz = c(1.5, 2.5, 3)) 
+
+
+#creatinf a data frame using function with previous vectors. 
+
+data.frame(vec3 = c(5,8,9,7,5,6,1,2,45,45),
+           vec4 = c(1,9,8,6,5,4,5,8,9,5),
+           string1 = c("train", "PC", "car", "truck", "coffee", "sugar", "pen", "pencil", "screen", "cell"))
+
+```
+
+Most often you will be using data frames loaded from a file. For example, load the results of a class survey. The function `load` or `read.table` can be used for this. 
+
+# How to Make a Random Sample
+
+To randomly select a sample use the function `sample()`. The following code selects 5 numbers between 1 and 10 at random (without duplication)
+
+```{r}
+sample(1:10, size=5)
+
+
+#creating a sample of 10 number on from 1 to 100 scale 
+
+sample(2:100, size = 10)
+
+
+```
+
+
+- The first argument gives the vector of data to select elements from.
+- The second argument (`size=`) gives the size of the sample to select.
+
+Taking a simple random sample from a data frame is only slightly more complicated, having two steps:
+
+1. Use `sample()` to select a sample of size `n` from a vector of the row numbers of the data frame. 
+2. Use the index operator `[` to select those rows from the data frame.
+
+
+Consider the following example with _fake data_. First, make up a data frame with two columns. (`LETTERS` is a character vector of length 26 with capital letters âAâ to âZâ; `LETTERS` is automatically defined and pre-loaded in `R`)
+
+```{r}
+bar <- data.frame(var1 = LETTERS[1:10], var2 = 1:10)
+# Check data frame
+bar
+
+
+#Matching data with letters. 
+chunk17<- data.frame(Column1 = LETTERS[1:10], Column2 = 1:10)
+chunk17
+
+
+
+
+```
+
+
+Suppose you want to select a random sample of size 5. First, define a variable `n` with the size of the sample, i.e. 5
+
+```{r}
+n <- 5
+
+#defining a variable and getting a sample from it. 
+n.2 = c(0,1,2,3)
+n.2 <-2
+
+
+
+```
+
+Now, select a sample of size 5 from the vector with 1 to 10 (the number of rows in `bar`). Use the function `nrow()` to find the number of rows in `bar` instead of manually entering that number. 
+
+Use `:` to create a vector with all the integers between 1 and the number of rows in `bar`.
+
+```{r}
+
+samplerows <- sample(1:nrow(bar), size=5) 
+# print sample rows
+samplerows
+
+#taking a sample of 4 from vector bar
+
+test1 <- sample(4:nrow(bar), size=5) 
+# print sample rows
+test1
+
+
+```
+
+
+
+The variable `samplerows` contains the rows of `bar` which make a random sample from all the rows in `bar`. Extract those rows from `bar` with
+
+```{r}
+# extract rows
+barsample <- bar[samplerows, ]
+# print sample
+print(barsample)
+
+
+#extracting columns from vectors
+testsample1 <- chunk17[2,]
+print(testsample1)
+
+
+```
+
+
+
+The code above creates a new _data frame_ called `barsample` with a random sample of rows from `bar`.
+
+In a single line of code: 
+
+```{r}
+bar[sample(1:nrow(bar), n), ]
+
+
+
+#creating a 
+chunk17[sample(1:nrow(chunk17),n),]
+
+
+
+```
+
+# Using Tables
+
+The `table()` command allows us to look at tables. Its simplest usage looks like `table(x)` where `x` is a _categorical variable_.
+
+For example, a survey asks people if they smoke or not. The data is 
+
+_Yes, No, No, Yes, Yes_
+
+We can enter this into R with the `c()` command, and summarize with the `table()` command as follows
+
+```{r}
+x <- c("Yes","No","No","Yes","Yes") 
+table(x)
+
+#summarizing categorical information
+
+categ1 <-c("cut", "uncut","cut", "uncut","cut", "uncut","cut", "uncut","cut", "uncut","cut", "uncut","cut")
+
+table(categ1)
+
+
+```
+
+# Numeric measures of center and spread
+
+Suppose, CEO yearly compensations are sampled and the following are found (in millions)
+
+12    .4    5     2     50    8     3     1     4     0.25
+
+```{r}
+sals <- c(12, .4, 5, 2, 50, 8, 3, 1, 4, 0.25)
+# the average
+mean(sals) 
+# the variance
+var(sals)
+# the standard deviation
+sd(sals)
+# the median
+median(sals)
+# Tukey's five number summary, usefull for boxplots
+# five numbers: min, lower hinge, median, upper hinge, max
+fivenum(sals)
+# summary statistics
+summary(sals)
+
+####numeric measures of center and spread
+
+Mes1 <- c(56,48,45,56,12,56,89,12,4,5,45,78,65,32,1,56,48,59,26,23,21,11)
+
+# the average
+mean(Mes1) 
+# the variance
+var(Mes1)
+# the standard deviation
+sd(Mes1)
+# the median
+median(Mes1)
+# Tukey's five number summary, usefull for boxplots
+# five numbers: min, lower hinge, median, upper hinge, max
+fivenum(Mes1)
+# summary statistics
+summary(Mes1)
+
+
+
+
+
+
+```
+
+
+### How about the _mode_? 
+
+In R we can write our own _functions_, and a first example of a function is shown below in order to compute _the mode_ of a vector of observations `x`
+
+```{r}
+# Function to find the mode, i.e. most frequent value
+getMode <- function(x) {
+     ux <- unique(x)
+     ux[which.max(tabulate(match(x, ux)))]
+ }
+```
+
+As an example, we can use the function defined above to find the most frequent value in te vector `baz`
+
+```{r}
+# Most frequent value in baz
+getMode(baz)
+
+
+#finding the mode of vector Mes1
+
+getMode(Mes1)
+```
+
+
+
+```{r}
+```
+
+
+
+

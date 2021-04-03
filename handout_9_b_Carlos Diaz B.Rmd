@@ -1,0 +1,321 @@
+---
+title: "Handout10_Ch5_Vis_Reg"
+output: html_notebook
+---
+
+--Welcome to Lecture#8,Chapter V.
+
+Let us start by finding our working directoty.
+
+```{r}
+getwd()
+#setwd("C:\\Users\\carlo\\Desktop\\cis3368")
+```
+
+
+```{r}
+# make sure the packages for this chapter
+# are installed, install if necessary
+pkg <- c("ggplot2", "scales", "maptools",
+              "sp", "maps", "grid", "car" )
+new.pkg <- pkg[!(pkg %in% installed.packages())]
+if (length(new.pkg)) {
+  install.packages(new.pkg)  
+}
+```
+
+Let us now make sure that the file zeroaccess is uploaded into your new project. Then let us define the variable za.
+
+```{r}
+# read the CSV with headers
+za <- read.csv("zeroaccess.csv", header=T,sep ="," )
+View(za)
+
+###############################################################
+
+#a variable containing the latitud anf longitude 
+
+###############################################################
+```
+
+What is the output we have just obtained after running the chunk above.
+
+
+
+```{r}
+# Load ggplot2 to create graphics
+library(ggplot2)
+
+
+# create a ggplot instance with zeroaccess data
+gg <- ggplot(data=za, aes(x=long, y=lat)) 
+# add the points, set transparency to 1/40th 
+gg <- gg + geom_point(size=1, color="#000099", alpha=1/40) 
+# add axes labels
+gg <- gg + xlab("Longitude") + ylab("Latitude")
+# simplify the theme for aesthetics
+gg <- gg + theme_bw() 
+# this may take a while, over 800,000 points plotted
+print(gg)
+##############################################################
+
+#creating a map with GGplot using lat and long from variable ZA, with a transparency of 1/40, added lables on x and y, background in white. 
+
+##############################################################
+```
+
+
+
+```{r}
+install.packages("mapproj")
+
+```
+
+
+```{r}
+library(mapproj)
+################################################################################
+
+#installing and calling package mapproj
+
+############################################################################
+
+```
+
+
+```{r}
+# requires package : ggplot2
+# requires object: za (5-1)
+# the "maps" and "mapproj" packages are used by ggplot
+# load map data of the world
+world <- map_data("world")
+#Remove Antarctica
+world <- subset(world, world$region!="Antarctica")
+# load world data into ggplot object
+gg <- ggplot(data=world, aes(x=long, y=lat))
+# trace along the lat/long coords by group (countries)
+gg <- gg + geom_path(aes(group=group), colour="gray70")
+# now project using the mercator projection
+# try different projections with ?mapproject
+gg <- gg + coord_map("mercator", xlim=c(-200, 200))
+# load up the ZeroAccess points, overiding the default data set
+gg <- gg + geom_point(data=za, aes(long, lat), 
+                      colour="#000099", alpha=1/40, size=1)
+# remove text, axes ticks, grid lines and do gray border on white
+gg <- gg + theme(text=element_blank(), 
+                 axis.ticks=element_blank(),
+                 panel.grid=element_blank(),
+                 panel.background=element_rect(color="gray50",
+                                               fill="white"))
+print(gg)
+#######################################################################################
+
+#create a map using ggplot with lat and long from variable va. Removing Antartica using different color and deliminting to -200 to 200. Removing axis ticks and grids and the background in grey. 
+#Countries now are defined but it is the same graph as above only with more definition. 
+
+####################################################################################
+```
+
+Interpret the output above. 
+
+
+#Let us proceed to define the file county.dataset found on blackboard.
+
+
+```{r}
+#read up census data per county
+county.data <- read.csv("county-data.csv", header=T,sep = ",")
+#############################################################################33
+#reading a new file county-data.csv
+
+
+#############################################################
+```
+
+
+```{r}
+View(county.data)
+```
+
+
+
+```{r}
+set.seed(1)
+# generate 200 random numbers around 10
+input <- rnorm(200, mean=10)
+summary(input)
+
+################################################################################3
+
+#generating a 200 points following normality with a mean of 10 and save in variable input. 
+#display variable input using summary
+
+
+#################################################################################
+```
+
+
+Interpret the synatx and the output above.
+
+
+```{r}
+# requires objects: input (5-16)
+# generate output around a mean of 2 x input
+output <- rnorm(200, mean=input*2)
+# put into data frame to plot it
+our.data <- data.frame(input, output)
+gg <- ggplot(our.data, aes(input, output))
+gg <- gg + geom_point()
+gg <- gg + geom_smooth(method = "lm", se=F, color="red")
+gg <- gg + theme_bw()
+print(gg)
+
+##############################################################
+
+#this code is to graph the variable output Vs input. Gnerating a 200 points following normality with a mean of 10 and save in variable output was generated. 
+
+
+#############################################################
+```
+
+
+Make comments about both the syntax and the output of the task executed above. Is it possible to customize this graph to make it more explanatory? If so explain and run the code.
+####################################################################################
+We might be able to run a different graph boxplot in order to see the outliers and the data in a different way. See code below. 
+
+new.df <- data.frame(input, output)
+
+p <- ggplot(new.df, aes(x=input, y=output))+
+  geom_boxplot()
+p
+
+I am joining the input and output together and saving it in a new data frame called p, then creating a new graph using ggplot and running the graph. 
+
+###############################################################################
+
+
+Let us now run **output** vs **input**.
+
+```{r}
+model <- lm(output ~ input)
+summary(model)
+```
+
+Is the input significant at a 5% significance level?1%?
+
+##################################################################
+
+#there is an observed significance  as per the P-Value at 2e-16. 
+
+##################################################################
+
+Let us now proceed to get the confidence interval for this model.
+
+```{r}
+confint(model)
+```
+
+Using the county.data dataset, let us run a model of Infections vs ufo2010(Aliens Visits according to the UFO).
+
+```{r}
+summary(lm(county-data$Infections ~ county-data$ufo2010, data= county-data.csv))
+#####################################################################################
+
+
+#there is no such column of "infections" on county-data. 
+
+###################################################################################
+```
+
+Given the output printed above, is ufo2010 significant at a 5% significance level?1%?
+
+#####################################################################################
+#no because of the reason below. 
+
+#there is no such column of "infections" on county-data. 
+
+###################################################################################
+
+Let us now run a model of Infections vs every single quantitative variable that is included in the dataset.
+
+
+```{r}
+View(county.data)
+```
+
+
+```{r}
+summary(lm(Infections ~ pop + income + ipaddr + ufo2010, 
+           data=county.data))
+```
+#####################################################################################
+#there is no output because Infections does not exist in county-data. 
+
+#there is no such column of "infections" on county-data. 
+
+###################################################################################
+
+Interpret the output. How would you proceed from now on in this handout given the results obtained above. 
+
+
+```{r}
+install.packages("carData")
+```
+
+
+```{r}
+library(car) # for the vif() function
+```
+
+Let us just explore the variance inflation factor(VIF) of the model to see if there is a chance of high correlation between my predictors. I remind you that a strong correlation between two of my predictors will likely end up in heteroskedasticity, and therefore our model would not be accuarate.  
+
+```{r}
+model <- lm(Infections ~ pop + income + ipaddr + ufo2010, 
+            data=county.data)
+sqrt(vif(model))
+#####################################################################################
+#there is no output as per the reason below. 
+
+#there is no such column of "infections" on county-data. 
+
+###################################################################################
+
+
+```
+
+
+Let us see if population affects the number of infections in this dataset. Write the null and alternative hypothesis you would use to test this relationship. 
+
+
+```{r}
+summary(lm(Infections ~ pop, data=county.data))
+
+#####################################################################################
+
+
+#there is no such column of "infections" on county-data. Therefore, there is no relationship. 
+
+###################################################################################
+```
+
+Interpret the results obtained above. 
+
+
+Now let us define the regression of Infections vs pop as pop.lm and predict the number of infections based on the variable population. 
+
+
+```{r}
+pop.lm <- lm(Infections ~ pop, data=county.data)
+predict(pop.lm, data.frame(pop=6000000), interval="confidence")
+
+#####################################################################################
+
+
+#there is no such column of "infections" on county-data. 
+
+###################################################################################
+```
+
+
+Interpret the results obtained above.
+

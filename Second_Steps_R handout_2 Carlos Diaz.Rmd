@@ -1,0 +1,421 @@
+---
+title: "Getting Started with R,Part II"
+output:
+  html_notebook: default
+  pdf_document: default
+  Student: Carlos Diaz
+---
+
+Let us continue getting started with R as we start discussing important statistical concepts.
+
+
+## Case-scenario 1
+Kate must take four quizzes in a math class. If her scores on the first three quizzes are 71, 69, and 79, what score does she need on the final quiz for her overall mean to be at least 70?
+
+## Solution
+
+Given that 
+$x_1 = 71, x_2 = 69, x_3 = 79$
+
+we want to find $x_4$ such that the mean (average) grade is 
+$\bar{x} >= 70$
+
+Notice that in this case $n = 4$.
+
+According to the information above:
+$70 \times 4 = 71 + 69 + 79 + x_4$
+
+so when $x_4 = 61$, the quiz average will be 70.
+
+
+```{r}
+# Grades so far
+grades_before <- c(71, 69, 79)
+# Average quiz grade wanted
+wanted_grade <- 70
+# Number of quizzes
+n_quizzes <- 4
+# Needed grade on quiz 4
+x_4 <- n_quizzes*wanted_grade - sum(grades_before)
+x_4
+
+#These are Frank Grades following scenario #1
+grades_before2 <- c(41,69,63,94,99)
+#average quiz wanted
+wg2 <- 70
+#Number of quizes
+n_quizzes2 <-c(6)
+#needed grade for the quiz 6 =70
+X_42<- n_quizzes2*wg2 - sum(grades_before2)
+X_42
+
+Frank_grades <-c(41,69,63,94,99,54)
+
+
+
+```
+
+According to the calculations above, Kate must score 61 or better on the final quiz to get an average quiz grade of at least 70.
+
+
+We could confirm this, by using the function `mean()` in `R`
+
+```{r}
+# Quiz grades
+kate_grades <- c(71, 69, 79,61)
+# Find mean
+mean(kate_grades)
+# Find standard deviation
+sd(kate_grades)
+# Find maximum grade
+max(kate_grades)
+# Find minimum grade
+min(kate_grades)
+```
+
+
+
+
+
+
+
+
+We can also use the `summary()` function to find basic statistics, including the median!
+
+```{r}
+summary(kate_grades)
+```
+
+
+Next, I would like you to explain in detail every single task we completed above. In addition, let us deal with a similar case scenario and complete every single task we execute in Case-scenario 1.
+
+######################################################################################################################
+Step 1: Using mean/average formula
+
+What is happening with Kate scores is a substitution in the average/mean formula. The formula to calculate the average/mean is average =(x1,x2,x3,x4)/n(number of total scores). Since we already know the values of the first 3 tests, we substitute the values and isolating x4. Therefore, the formula would be: (average(desired grade)*N)-addition of (x1,x2,x3) = x4. Therefore, by substituting the values, it would look like this:
+
+                (70*4)-(71,69,79) = x4
+                               61 = x4  
+
+Step 2:Using function mean
+
+In this case, the desired grade is used to verified the number. There is a list created with Kate's grades kate_grades <- c(71, 69, 79,61), then the standard deviation, the maximum and the minimum numbers are created using R functions and 61 is the final number.  
+
+Step3: Using median
+This step is basically the same as step 2. However, the function summary is used to get the same values as step 2. It is a faster process. 
+
+
+
+
+#######################################################################################################################
+
+Frank must take six quizzes in a Physics class. If his scores on the first five quizzes are 41, 69,63,94, and 99, what score does he need on the final quiz for his overall mean to be at least 70?
+
+See answer above
+
+#############
+
+###Now let us go back to Case-scenario 1
+
+Another useful function is `quantile` to find 
+```{r}
+# the 25% 
+quantile(kate_grades, 1/4)
+# the 75%
+quantile(kate_grades, 3/4)
+# the function IQR finds the interquantile range
+# IQR(x) = quantile(x, 3/4) - quantile(x, 1/4)
+IQR(kate_grades)
+
+
+
+################################################
+#these are X_4 Frank Scores
+Frank_grades
+
+ # the 25% 
+quantile(Frank_grades, 1/4)
+
+# the 75%
+
+quantile(Frank_grades, 3/4)
+
+# the function IQR finds the interquantile range
+# IQR(x) = quantile(x, 3/4) - quantile(x, 1/4)
+IQR(Frank_grades)
+
+
+
+
+
+
+```
+
+
+Make comments about the output and run a similar query using Frank_grades
+
+####################################################################################################
+
+Using Quantile: In this case, the R function used is Quantile. For this, all the grades from the student are needed. See exmaple above. 
+
+
+
+#####################################################################################################
+
+
+# Case-scenario 2
+
+
+The average salary of 10 men is 72,000 and the average salary of 4 women is 84,000. Find the mean salary of all 14 people.
+
+## Solution
+
+We can easily find the joined mean by adding both mean and dividing by the total number of people.
+
+Let $n_1 = 10$ denote the number of men, and $y_1 = 72000$ their mean salary. Let $n_2 = 4$ the number of women and $y_2 = 84000$ their mean salary.
+Then the mean salary of all 16 individuals is:
+$\frac{n_1 x_1 + n_2 x_2}{n_1 + n_2}$
+
+We can compute this in R as follows:
+
+```{r}
+n_1 <- 10
+n_2 <- 4
+y_1 <- 72000
+y_2 <- 84000
+# Mean salary overall
+salary_ave <-  (n_1*y_1 + n_2*y_2)/(n_1+n_2)
+salary_ave
+
+###############################################################################################
+
+#this is my answer
+#using the formula above.
+
+n_11 <- 10
+n_22 <- 10
+y_11 <- 95000
+y_22 <- 75000
+# Mean salary overall
+salary_ave2 <-  (n_11*y_11 + n_22*y_22)/(n_11+n_22)
+salary_ave2
+
+
+###########################################################################################
+
+```
+
+Solve a similar problem by changing number of men and women as well as the average income for each group. Make comments about the output.
+#################################################################################################
+Answer: What is happening in the first example, the salary of men is lower than women, although women's salary is higher than men's there is a disparity in the number of subjects. So, the data seems to be biased towards women in this case and not very significant.  
+
+On my example, I made both number of women and men the same, so I could get a better average between both genders at $85,000. 
+
+
+#################################################################################################
+
+
+# Case-scenario 3
+
+The frequency distribution below lists the results of a test given in Professor Wang's String theory class.
+
+Score   |   Number of students
+--------|----------------------
+10      | 5
+9       | 10
+8       | 6
+7       | 8
+6       | 3
+5       | 2
+
+
+
+1. Find the mean,the median and the standard deviation of the scores.
+
+2. What percentage of the data lies within one standard deviation of the mean?
+
+3. What percentage of the data lies within two standard deviations of the mean?
+
+4. What percent of the data lies within three standard deviations of the mean? 
+
+5. Draw a histogram to illustrate the data. 
+
+## Solution
+
+The `allScores.csv` file contains all the students' scores in the quiz. We can read this file in `R` using the `read.csv()` function (hint:First create a csv file with 6 rows and 2 columns)
+
+```{r}
+scores <- read.table("allScores.csv", header = TRUE, sep = ",")
+WangScores <- scores$Score
+############################################################################
+
+#Comments in this code we are looking to read a file .csv with headers, separated by commnas. 
+
+
+##################################################
+
+
+
+#Make comments about the code we just ran above.  
+
+
+#1. To find the mean and the standard deviation
+
+# Mean 
+Scores_mean  <- mean(WangScores)
+Scores_mean
+# Median
+Scores_median <- median(WangScores)
+Scores_median
+# Find number of observations
+Scores_n <- length(WangScores)
+# Find standard deviation
+Scores_sd <- sd(WangScores)
+
+
+#######################################################################################
+
+#frank Grades
+
+Frank_grades
+
+
+
+# Mean 
+Scores_mean2  <- mean(Frank_grades)
+Scores_mean2
+# Median
+Scores_median2 <- median(Frank_grades)
+Scores_median2
+# Find number of observations
+Scores_n2 <- length(Frank_grades)
+# Find standard deviation
+Scores_sd2 <- sd(Frank_grades)
+
+
+
+#####################################################################################
+
+
+
+
+
+
+
+```
+
+2. What percentage of the data lies within one standard deviation of the mean?
+
+```{r}
+scores_w1sd <- sum((WangScores - Scores_mean)/Scores_sd < 1)/ Scores_n
+# Percentage of observation within one standard deviation of the mean
+scores_w1sd
+## Difference from empirical 
+scores_w1sd - 0.68
+
+#################################################################
+
+#Frank_grades
+
+scores_w1sd2 <- sum((Frank_grades - Scores_mean2)/Scores_sd2 < 1)/ Scores_n2
+# Percentage of observation within one standard deviation of the mean
+scores_w1sd2
+## Difference from empirical 
+scores_w1sd2 - 0.68
+
+
+
+#####################################
+
+```
+
+3. What percentage of the data lies within two standard deviations of the mean?
+
+```{r}
+## Within 2 sd
+scores_w2sd <- sum((WangScores - Scores_mean)/ Scores_sd < 2)/Scores_n
+scores_w2sd
+## Difference from empirical 
+scores_w2sd - 0.95
+####################################################################
+#Frank_grades
+
+## Within 2 sd
+scores_w2sd2 <- sum((Frank_grades - Scores_mean2)/ Scores_sd2 < 2)/Scores_n2
+scores_w2sd2
+## Difference from empirical 
+scores_w2sd2 - 0.95
+
+
+
+
+
+
+####################################################
+
+```
+
+
+4. What percent of the data lies within three standard deviations of the mean?
+
+```{r}
+## Within 3 sd 
+scores_w3sd <- sum((WangScores - Scores_mean)/ Scores_sd < 3)/Scores_n
+scores_w3sd
+## Difference from empirical 
+scores_w3sd - 0.9973
+
+###############################################
+
+#Frank_grades
+
+## Within 3 sd 
+scores_w3sd2 <- sum((Frank_grades - Scores_mean2)/ Scores_sd2 < 3)/Scores_n2
+scores_w3sd2
+## Difference from empirical 
+scores_w3sd2 - 0.9973
+
+
+
+
+
+##############################################
+
+
+
+
+```
+
+Explain the implications of the results obtained in this problem. In addition, create a similar query but this time addressing Frank_Scores
+
+
+5. Draw a histogram
+
+```{r}
+# Create histogram
+hist(WangScores)
+
+
+#######################################################
+
+#Frank_grades create a histogram
+
+hist(Frank_grades)
+
+
+####################################
+
+
+
+
+```
+
+Explain the output and create a similar histogram for Frank_Scores.
+
+
+
+
+
+
+
+

@@ -1,0 +1,233 @@
+---
+title: "Final_Project_Logistic"
+output: html_notebook
+---
+The idea of this handout is to develop a logistic regression model to discuss the odds of the presence of a bening or a spam URL_type. In this mini tutorial you have the steps we need to follow in order to complete this acitivity. This is just the starting point, during the remaining two weeks we are going to continue working on this document.
+
+
+```{r}
+setwd("C:/Users/carlo/Desktop/CIS3368")
+final2_2<-read.csv("groupII.csv",sep = ",",header = TRUE)
+```
+
+
+```{r}
+final2_22<-final2_2[,c(1,3,5,6,8,9,20,22,24,27,28,29,30,31,32,37,46,51,52,53,54,62,74,80)]
+```
+
+```{r}
+head(final2_22)
+```
+
+
+
+```{r}
+summary(final2_22)
+```
+
+
+```{r}
+str(final2_22)
+```
+
+## Train and Test Data
+
+The purpose of creating two different datasets from the original one is to improve our ability so as to accurately predict the previously unused or **unseen data**.
+
+There are a number of ways to proportionally split our data into `train` and `test` sets: 50/50, 60/40, 70/30, 80/20, and so forth. The data split that you select should be based on your experience and judgment. For this exercise, we will use a 70/30 split, as follows:
+
+```{r}
+set.seed(123)  # random number generator
+ind <- sample(2, nrow(final2_22), replace = TRUE, prob = c(0.7, 0.3))
+```
+
+Partitioning the data:
+
+```{r}
+train <- final2_22[ind==1, ]  #the training set
+
+test <- final2_22[ind==2, ]   # the testing set 
+```
+
+
+You can confirm the dimensions of both sets as follows:
+
+
+```{r}
+dim(train)
+dim(test)
+```
+
+To ensure that we have a well-balanced outcome variable between the two datasets, we will perform the following check:
+
+```{r}
+table(train$URL_Type_obf_Type)
+table(test$URL_Type_obf_Type)
+```
+
+
+This is an acceptable ratio of our outcomes in the two datasets; with this, we can begin the modeling and evaluation.
+
+
+# Modeling and Evaluation
+
+We will use the function `glm()` (from base R) for the logistic regression model.
+
+An R installation comes with the `glm()` function fitting the **generalized linear models**, which are a class of models that includes logistic regression. The code syntax is similar to the `lm()` function that we used for linear regression. One difference is that we must use the `family = binomial` argument in the function, which tells R to run a logistic regression method instead of the other versions of the generalized linear models. We will start by creating a model that includes all of the features on the train set and see how it performs on the test set:
+
+
+```{r}
+summary(train$URL_Type_obf_Type)
+```
+
+```{r}
+str(train$URL_Type_obf_Type)
+```
+
+
+```{r}
+View(train)
+```
+
+```{r}
+attach(train)
+```
+
+
+
+
+```{r}
+full.fit22 <- glm(URL_Type_obf_Type ~ ., family = binomial, data = train)
+```
+
+Create a summary of the model:
+
+```{r}
+summary(full.fit22)
+```
+
+
+You cannot translate the coefficients in logistic regression as "the change in Y is based on one-unit change in X". 
+
+This is where the odds ratio can be quite helpful. The beta coefficients from the log function can be converted to odds ratios with an exponent (beta).
+
+In order to produce the odds ratios in R, we will use the following `exp(coef())` syntax:
+
+```{r}
+exp(coef(full.fit22))
+```
+
+
+The interpretation of an odds ratio is the change in the outcome odds resulting from a unit change in the feature. If the value is greater than 1, it indicates that, as the feature increases, the odds of the outcome increase. Conversely, a value less than 1 would mean that, as the feature increases, the odds of the outcome decrease.
+
+
+Let us now run a model with the coefficients with the lowest p-values.
+
+
+
+## Testing the model
+
+You will first have to create a vector of the predicted probabilities, as follows:
+
+```{r}
+train.probs <- predict(full.fit22, type = "response")
+# inspect the first 5 probabilities
+train.probs[1:5]
+```
+
+
+
+Next, we need to evaluate how well the model performed in training and then evaluate how it fits on the test set. A quick way to do this is to produce a confusion matrix. The default value by which the function selects either benign or malignant is 0.50, which is to say that any probability at or above 0.50 is classified as malignant:
+
+```{r}
+install.packages("MergeGUI")
+```
+
+```{r}
+library(MergeGUI)
+```
+
+
+```{r}
+install.packages("caret")
+```
+
+
+
+```{r}
+library(rpart)
+```
+
+
+
+```{r}
+install.packages("rpart")
+```
+
+```{r}
+y <- ifelse(final2_22$URL_Type_obf_Type == "benign", 1, 0)
+```
+
+
+```{r}
+library(caret)
+trainY<-y[ind==1]
+testY<-y[ind==2]
+
+```
+
+```{r}
+length(train.probs)
+```
+
+
+```{r}
+length(trainY)
+```
+
+```{r}
+
+trainY <- na.omit(final2_22$URL_Type_obf_Type)
+```
+
+
+```{r}
+length(trainY)
+length(train.probs)
+```
+
+
+```{r}
+View(trainY)
+```
+
+
+```{r}
+table(trainY)
+table(train.probs)
+```
+
+
+```{r}
+confusionMatrix(trainY,train.probs)
+```
+
+We are getting an error that needs to be fixed during regular class section.
+
+```{r}
+misClassError(trainY, train.probs)
+```
+
+
+```{r}
+test.probs <- predict(full.fit22, newdata = test, type = "response")
+# misclassification error
+misClassError(testY, test.probs)
+# confusion matrix
+confusionMatrix(testY, test.probs)
+
+
+```
+
+
+

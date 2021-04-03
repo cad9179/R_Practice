@@ -1,0 +1,297 @@
+---
+title: "Handout_9"
+output:
+  html_document:
+    df_print: paged
+    
+#Student: Carlos Diaz
+---
+
+##Chapter IV,Part I
+
+Welcome to Lecture#7 (Handout#9). Let us start by finding out our working directory.
+
+```{r}
+#getwd()
+setwd("C:/Users/carlo/Desktop/CIS3368")
+```
+
+
+
+Now, let us upload the data sets needed for this handout into our project, **reputation.data** and **dest.ips**.
+
+
+
+```{r}
+av <- read.csv("reputation.data",sep = "#",header =FALSE )
+##############################################################################
+
+#The first part is about getting the working directory for R
+#second, changing the working directory to the CIS class
+#third, reading the reputationdata.csv, and putting it in a variable (AV)
+
+
+##############################################################################
+```
+
+Make comments about the chunk of code ran above.
+
+```{r}
+View(av)
+################################################################
+
+#here we view the file that we just read
+
+###############################################################
+```
+
+Make comments about the chunk of code ran above.
+
+```{r}
+#Let us proceed to create a header for each column.
+
+colnames(av) <- c("IP", "Reliability", "Risk", "Type",
+                  "Country", "Locale", "Coords", "x")
+
+################################################################
+
+#Here we createa a header for the file we just read. 
+
+#################################################################
+```
+
+
+Make comments about the chunk of code ran above.
+
+```{r}
+View(av)
+#########################################################################
+
+#Here we view the file with the new tittles. 
+
+#######################################################################
+```
+
+Make comments about the chunk of code ran above.
+
+```{r}
+# create a vector of lat/long data by splitting on ","
+av.coords.vec <- unlist(strsplit(as.character(av$Coords), ","))
+#########################################
+
+#Here we split the data into a new vector including the coordinates. 
+
+########################################
+```
+
+
+
+```{r}
+View(av.coords.vec)
+############################################
+
+#here we view the vector. 
+
+##########################################
+```
+
+
+```{r}
+# convert the vector in a 2-column matrix
+av.coords.mat <- matrix(av.coords.vec, ncol=2, byrow=TRUE)
+
+########################################################################
+
+#here we split the colum into a 2 column matrix. 
+
+#######################################################################
+
+```
+
+
+```{r}
+View(av.coords.mat)
+
+####################################
+
+
+#here we view the new vector. 
+
+######################################
+```
+
+
+
+```{r}
+# project into a data frame
+av.coords.df <- as.data.frame(av.coords.mat)
+#####################################################
+
+
+#here we add the data to a new dataframe. 
+
+
+#####################################################
+```
+
+
+
+```{r}
+View(av.coords.df)
+
+##############################################
+
+#here we view the new vector. 
+
+##############################################
+```
+
+Make comments about the chunk of code ran above.
+
+
+```{r}
+# name the columns 
+colnames(av.coords.df) <- c("lat","long")
+
+###############################################
+
+#naming the columns on the new vector that we just created. 
+
+#############################################
+
+
+```
+
+Make comments about the chunk of code ran above.
+
+```{r}
+# convert the characters to numeric values
+av.coords.df$long <- as.double(as.character(av.coords.df$long))
+av.coords.df$lat <- as.double(as.character(av.coords.df$lat))
+##############################################################
+
+#here we convert the characters to numeric values and add to a respective variable. 
+
+##############################################################
+
+```
+
+Make comments about the chunk of code ran above.
+
+
+```{r}
+# requires packages: ggplot2, maps, RColorBrewer, scales
+# requires object: av.coords.df (4-3)
+# R code to extract longitude/latitude pairs from AlienVault data
+# need plotting and mapping functions plus colors
+#install.packages("ggplot2")
+#install.packages("maps")
+#install.packages("RColorBrewer")
+#install.packages("scales")
+```
+
+
+
+
+```{r}
+library(ggplot2)
+library(maps)
+library(RColorBrewer)
+library(scales)
+#Which of the libraries listed above was previously used in this course?
+
+######################################
+
+#all of the previous libraries have been used. 
+
+
+######################################
+```
+
+
+
+
+```{r}
+# extract a color palette from the RColorBrewer package
+set2 <- brewer.pal(8,"Set2")
+```
+
+
+
+```{r}
+# extract the polygon information for the world map, minus Antarctica
+world <- map_data('world')
+world <- subset(world, region != "Antarctica")
+#Do you see the utility of the code ran above?Please explain.
+
+############################################3
+
+#getting the map of the world
+#getting the map excluding Antartica
+
+############################################3
+
+```
+
+
+
+```{r}
+
+# plot the map with the points marking lat/lon of the geocoded entries
+# plotting ~200K takes a bit of time
+gg <- ggplot()
+gg <- gg + geom_polygon(data=world, aes(long, lat, group=group), 
+                        fill="white")
+gg <- gg + geom_point(data=av.coords.df, aes(x=long, y=lat),  
+                      color=set2[2], size=1, alpha=0.1)
+gg <- gg + labs(x="", y="")
+gg <- gg + theme(panel.background=element_rect(fill=alpha(set2[3],0.2), 
+                                              colour='white'))
+gg
+```
+
+
+Make comments about the chunk of code ran above.In addition, interpret the output and discuss your findings.
+##########################################################################################
+
+#regarding the code, it is plotting the infections around the world using the coordinates previously separated from the main file. 
+
+#fidings: It looks like East of the United States, West around the California area, Western Europe and SouthWest Asia seems to be the most affected area of infections. 
+
+
+
+
+######################################################################################3
+
+
+
+```{r}
+# read in list of destination IP addresses siphoned from firewall logs
+dest.ips <- read.csv("dest.ips", col.names= c("IP"))
+
+##########################
+
+#This code is putting on a variable the destination IP addresses found from the firewall
+#######################################################################################
+```
+ 
+
+
+```{r}
+#take a look at the reliability of the IP address entries
+# (you could also plot a histogram)
+table(av[av$IP %in% dest.ips$IP, ]$Reliability)
+
+###########################################################################
+
+#Plotting a frequency between the frequency and the IP/reliability 
+hist (av[av$IP %in% dest.ips$IP, ]$Reliability)
+
+#####################################################################
+
+```
+
+Discuss your findings. 
+
+It seems that the most frequency lies between the 2 an 3. Followed by 6 and later 4. It also seems by looking at the map that there is no an area that it has not been affected by the problem. There sesm to be a low reliability of the system and high risk of spreading the infection further. 
+

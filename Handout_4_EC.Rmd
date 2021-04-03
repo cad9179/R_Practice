@@ -1,0 +1,112 @@
+---
+title: "Handout_4 by Eddy Chauca"
+output: html_notebook
+---
+
+## Welcome to Lecture IV (Chapter II)
+
+I would like you to start this handout by defining the following parameters:
+hosts,
+vulnerability,
+data frame,
+list,
+array,
+matrix,
+categorical data,
+operating systems,
+nodes,
+zones,
+IP.
+
+
+
+```{r}
+
+# create a new data frame of hosts & high vuln counts
+assets.df <- data.frame(
+  name=c("danube","gander","ganges","mekong","orinoco"),
+  os=c("W2K8","RHEL5","W2K8","RHEL5","RHEL5"),
+  highvulns=c(1,0,2,0,0))
+#Let us now take a look at the data frame assets.df
+View(assets.df)
+#Describe our data frame in a few words
+```
+Data frame assets has three variables: name, os, and highvulns ; and 5 observations. It describes different hosts with their respective operating systems, and their levels of vulnerability.
+
+```{r}
+# take a look at the data frame structure & contents
+str(assets.df)
+
+
+# show a "slice" just the operating systmes
+
+```
+We check the data:
+```{r}
+head(assets.df)
+```
+We show now, only the operating systems
+```{r}
+head(assets.df$os)
+```
+
+Explain the output as well as the syntax of the R-code used for this acitivity (above).
+The str(assets.df) function, let us look at the internal stucture of the object. We can see in the output that we have three variables and five observations. The variables are name, os, and highvulns. It's important to realize that each variable in itself is a vector. We also see that we have two variables of type chr and one variable of type dbl.
+The head(assets.df) function returns by default the first six rows of the data frame. The function takes two arguments:the object we want to display and the number of rows we want to see.
+
+```{r}
+# by default R creates "factors" for categorical data so
+# we use as.character() to expand the factors out
+head(assets.df$os)
+#Explain the output
+
+```
+In this case head(assets.df$os) shows only the vector os. 
+
+```{r}
+# add a new column
+assets.df$ip <- c("192.168.1.5","10.2.7.5","192.168.1.7",
+                     "10.2.7.6", "10.2.7.7")
+str(assets.df)
+```
+Show the data frame with the new data
+```{r}
+head(assets.df)
+```
+
+Describe what we have just accomplished in the chunk above. In addition, explain the syntax used to complete this task.
+"assets.dfDollarSignip" adds a new column with a vector named ip with 5 observations. Notice that this accomplished using the "$" sign between the name of the data frame and the name of the new column we are adding.
+
+```{r}
+# extract only nodes with more than one high vulnerability
+head(assets.df[assets.df$highvulns>1,])
+```
+
+Explain the syntax as well as the output of the task executed above
+The function head() shows the first rows of the data frame, but this time the syntax is choosing to show only the rows when highvulns column is greater than 1. In our example there is only one row that satisfies that requirement and it was showed in the output. 
+
+```{r}
+# create a 'zones' column based on prefix IP value
+assets.df$zones <- ifelse(grepl("^192",assets.df$ip),"Zone1","Zone2")
+str(assets.df)
+```
+```{r}
+exam1 <-data.frame(name=c("america","australia","africa","europe","asia"),os=c("W2K8","RHEL5","W2K8","RHEL5","RHEL5"),highvulns=c(1,0,2,0,0),ip=c("192.168.1.5","10.2.7.5","192.168.1.7","10.2.7.6", "10.2.7.7"))
+head(exam1)
+```
+```{r}
+head(exam1[exam1$highvulns>1,])
+```
+```{r}
+exam1$zones <- ifelse(grepl("^192",exam1$ip),"Zone1","Zone2")
+```
+
+Explain the syntax as well as the output of the chunk ran above
+A new column named "zones" is added to assets data frame using ifelse. If ip column begins with 192 the observation is created as "Zone1" otherwise it is created as "Zone2"
+```{r}
+
+head(assets.df)
+```
+
+Take a final look at the dataframe and explain your findings on this activity.
+We began with data frame "assets.df" with 3 variables and 5 observations and the data frame at the end has 5 columns and 5 observations.

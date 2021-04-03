@@ -1,0 +1,150 @@
+---
+title: "Handout IV (Chapter II)"
+output: html_notebook
+---
+
+###Welcome to Lecture IV (Chapter II)
+
+I would like you to start this handout by defining the following parameters:
+
+hosts: A network host is a computer or other device connected to a computer network. A host may work as a server offering information resources, services, and applications to users or other hosts on the network.
+
+vulnerability: is a weakness which can be exploited by a cyber attack to gain unauthorized access to or perform unauthorized.
+
+data frame: A data frame is a table or a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.
+
+list: Lists are the R objects which contain elements of different types like − numbers, strings, vectors and another list inside it. A list can also contain a matrix or a function as its elements. List is created using list() function.
+
+array: Arrays are the R data objects which can store data in more than two dimensions. For example − If we create an array of dimension (2, 3, 4) then it creates 4 rectangular matrices each with 2 rows and 3 columns. Arrays can store only data type.
+An array is created using the array() function. It takes vectors as input and uses the values in the dim parameter to create an array.
+
+matrix:Matrices are the R objects in which the elements are arranged in a two-dimensional rectangular layout. They contain elements of the same atomic types. Though we can create a matrix containing only characters or only logical values, they are not of much use. We use matrices containing numeric elements to be used in mathematical calculations.A Matrix is created using the matrix() function.
+
+categorical data:Categorical data is the statistical data type consisting of categorical variables or of data that has been converted into that form, for example as grouped data. More specifically, categorical data may derive from observations made of qualitative data that are summarized as counts or cross tabulations, or from observations of quantitative data grouped within given intervals.
+
+operating systems:the software that supports a computer's basic functions, such as scheduling tasks, executing applications, and controlling peripherals.
+
+nodes:is a basic unit of a data structure, such as a linked list or tree data structure. Nodes contain data and also may link to other nodes.
+
+zones:provides virtual or physical data center security solutions for the prevention, detection, and remediation of virus and malware infections for servers.
+
+IP: is the principal communications protocol in the Internet protocol suite for relaying datagrams across network boundaries. Its routing function enables internetworking, and essentially establishes the Internet. IP has the task of delivering packets from the source host to the destination host solely based on the IP addresses in the packet headers. For this purpose, IP defines packet structures that encapsulate the data to be delivered.
+
+
+
+```{r}
+
+# create a new data frame of hosts & high vuln counts
+assets.df <- data.frame(
+  name=c("danube","gander","ganges","mekong","orinoco"),
+  os=c("W2K8","RHEL5","W2K8","RHEL5","RHEL5"),
+  highvulns=c(1,0,2,0,0))
+#Let us now take a look at the data frame assets.df
+View(assets.df)
+#Describe our data frame in a few words
+
+#Data Frame has 3 columns and 5 rows. It seems to be composed of Categorical and qualitative data. 
+
+
+
+
+```
+
+
+```{r}
+# take a look at the data frame structure & contents
+str(assets.df)
+head(assets.df)
+
+# show a "slice" just the operating systems
+
+head(assets.df$os)
+
+
+```
+
+Explain the output as well as the syntax of the R-code used for this activity (above).
+********************************************************************************************
+The str(assets.df) function, allow us to look at the internal structure of the object. There are three fields (name, os, and highvulns). Each is a vector that was compacted joined by assets main vector. We can also see the type of vector it is, "fctr", or "dbl".
+
+The head(assets.df)  returns the first n rows of a matrix or data frame in R Tail Function in R: returns the last n rows of a matrix or data frame in R slice_sample() function in R returns the sample n rows of the dataframe in R.
+
+***************************************************************************************************
+
+```{r}
+# by default R creates "factors" for categorical data so
+# we use as.character() to expand the factors out
+head(assets.df$os)
+#Explain the output
+***************************************************************************************************
+#In this case head(assets.df$os) shows only the vector os.
+***************************************************************************************************
+```
+
+
+```{r}
+# add a new column
+assets.df$ip <- c("192.168.1.5","10.2.7.5","192.168.1.7",
+                     "10.2.7.6", "10.2.7.7")
+
+```
+
+Describe what we have just accomplished in the chunk above. In addition, explain the syntax used to complete this task.
+***************************************************************************************************
+"assets.df$nip" adds a new column with a vector named ip with 5 observations. 
+
+***************************************************************************************************
+
+```{r}
+# extract only nodes with more than one high vulnerability
+head(assets.df[assets.df$highvulns>1,])
+
+```
+
+Explain the syntax as well as the output of the task executed above
+***************************************************************************************************
+
+In this case, the syntax says that we are extracting all the lines where the high vulnerabilities are greater than 1. Also, function "head" means to include the header with the result. 
+
+
+***************************************************************************************************
+
+```{r}
+# create a 'zones' column based on prefix IP value
+assets.df$zones <- ifelse(grepl("^192",assets.df$ip),"Zone1","Zone2")
+str(assets.df)
+```
+```{r}
+ 
+```
+
+Explain the syntax as well as the output of the chunk ran above
+
+***************************************************************************************************
+
+A new column named "zones" is added to assets data frame using ifelse. If ip column begins with 192 the observation is created as "Zone1" otherwise it is created as "Zone2"
+
+
+
+
+
+***************************************************************************************************
+
+
+
+
+```{r}
+
+head(assets.df)
+```
+
+Take a final look at the dataframe and explain your findings on this activity.
+***************************************************************************************************
+
+We began with data frame "assets.df" with 3 variables and 5 observations and the data frame. Another two columns were added with 5 observations each. There are vulnerabilities by zone 1 and 2 and the IP addresses where this vulnerabilites happened. 
+
+
+
+
+
+***************************************************************************************************

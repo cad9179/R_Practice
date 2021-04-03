@@ -1,0 +1,453 @@
+---
+title: "Handout_13_reg-ML"
+output: html_notebook
+Student: Carlos Diaz
+---
+
+
+```{r}
+
+getwd()
+
+```
+
+
+```{r}
+data<-read.csv("quiz2.csv",header = TRUE,sep = ",")
+data
+
+#############################################################################
+
+#Reading the data from the working folder. 
+#############################################################################
+
+```
+
+
+```{r}
+summary(data)
+#############################################################################
+
+# Taking a look at the data before manipulating it. 
+#############################################################################
+```
+
+
+```{r}
+str(data)
+```
+
+```{r}
+head(data)
+```
+
+
+```{r}
+model1<-lm(infections~income+pop,data = data)
+summary(model1)
+
+#############################################################################
+
+# Running a multiple regression model between infections VS income and population from data variable and getting a summary of result. 
+#############################################################################
+```
+
+
+```{r}
+vif(model1)
+#################################################################
+
+#Getting multicolinearity fo income and pop in order to see much the variance of a regression coefficient is inflated due to multicollinearity in the model. They are pretty much the same, so, no mutlicolinearity problems. 
+
+###############################################################
+
+
+```
+
+
+```{r}
+confint(model1)
+
+############################################################################
+
+#Getting confidence intervals of income and population. 
+
+##########################################################################
+
+```
+
+
+
+```{r}
+data1<-data[,c(3,4,5,6,7)]
+############################################################################
+
+#creating a vector. 
+
+##########################################################################
+
+```
+
+
+```{r}
+cor.data<-cor(data1)
+cor.data
+
+
+############################################################################
+
+#Getting correlation of data
+
+##########################################################################
+
+
+
+```
+
+
+
+
+```{r}
+install.packages("Correlplot")
+```
+
+```{r}
+library(corrplot)
+```
+
+```{r}
+corrplot(cor.data,method = "ellipse")
+
+############################################################################
+
+#Getting correlation plot of the data using elipse as visual method
+
+##########################################################################
+
+
+```
+
+
+
+```{r}
+install.packages("leaps")
+library("leaps")
+```
+
+
+```{r}
+model2<-lm(infections~.,data = data1)
+summary(model2)
+
+############################################################################
+
+#Runing new regression model between infections Vs all data
+
+##########################################################################
+
+```
+
+
+```{r}
+vif(model2)
+############################################################################
+
+##Getting multicolinearity of the model to see much the variance of a regression coefficient is inflated due to multicollinearity in the model. There are some mutlicolinearity problems with ipaddr and UFO2010 primarily.  
+
+##########################################################################
+
+
+```
+
+
+```{r}
+submodel2<-regsubsets(infections~.,data = data1)
+best.summary<-summary(submodel2)
+######################################################################################
+#Getting the subsets of the model and recording it in a new variable. 
+#####################################################################################
+```
+
+
+
+```{r}
+names(best.summary)
+################################################################
+
+#getting the names of the new subsets. 
+###############################################################
+
+```
+
+
+
+```{r}
+which.min(best.summary$rss)
+#################################################################
+
+#getting min subsets 
+###########################################################
+
+```
+
+```{r}
+par(mfrow=c(1,2))
+
+#####################################################
+
+#pairing the subsets in order to create a plot 
+
+
+#####################################################
+
+```
+
+```{r}
+plot(best.summary$cp,xlab = "number of features",ylab = "cp")
+```
+
+
+```{r}
+which.min(best.summary$bic)
+```
+
+
+
+```{r}
+which.max(best.summary$adjr2)
+```
+
+
+```{r}
+bestsummary.fit1<-lm(infections~income+ufo2010,data = data1)
+```
+
+
+
+```{r}
+summary(bestsummary.fit1)
+```
+
+Make a decision that you think can help us get the best results out of this model.
+
+
+```{r}
+par(mfrow=c(2,2))
+plot(bestsummary.fit1)
+
+###############################################################################
+#On the code above, the author got the best points using R2 and re-ran a regression. Then created a plot 2x2 of the best points including the residual points. See below. 
+
+#############################################################################
+
+```
+
+
+```{r}
+library(car)
+vif(bestsummary.fit1)
+
+######################################################
+#Here they are getting the Variable inflation factor of the model above and it shows that there is no multicolinearity problems. 
+
+####################################################
+
+```
+
+
+
+```{r}
+bestsummary.fit2<-lm(infections~ufo2010,data = data1)
+summary(bestsummary.fit2)
+
+###########################################################################
+#Here the author is running a new regression model using only infections and upf2010.
+#########################################################################
+
+
+```
+
+
+```{r}
+bestsummary.fit3<-lm(infections~income,data = data1)
+summary(bestsummary.fit3)
+```
+
+
+Let us run the Breuch-Pagan (BP)test in order to address the heteroskedasticity issue:
+
+
+$H_0$:$sigma^2=0$
+$H_a$:$Otherwise$
+
+```{r}
+library(lmtest)
+
+##############################################################
+#in this part the author realized that the variability of income variable is unequal across the range of values of infections variable that predicts it.Therefore, he is trying for heteroskedasticity in order to measure it. 
+#########################################################
+```
+
+```{r}
+bptest(bestsummary.fit2)
+```
+
+P-value =0.8132 so we do not have enough evidence to reject the null(error variance=0)
+
+#################################################################################
+#Here the author realized that heteroskedasticity is not a problem (P-value =0.8132 so we do not have enough evidence to reject the null(error variance=0))
+###############################################################################
+
+
+
+```{r}
+plot(bestsummary.fit2$fitted.values,data1$infections,xlab = "predicted",ylab = "actual",main = "Actual vs Predicted")
+##############################################################################
+
+#here they are plotting the second model 
+#############################################################################
+
+```
+
+
+
+```{r}
+data1["Actual"]=data$ufo2010
+#create the vector actual
+data1$Forecast=predict(bestsummary.fit2)
+#populate forecast with the predicted values
+
+###############################################################################
+#Here the author is creating a vector to fit the predicted values and run a final forecast. 
+
+###############################################################################
+
+
+
+```
+
+
+
+```{r}
+library(ggplot2)
+```
+
+
+
+
+```{r}
+ggplot(data1,aes(x=Forecast,y=Actual))+geom_point()
+geom_smooth(method = lm)
+
+#################################################################
+#Plotting using ggplot to plot forecast Vs actual and using the geom_smooth method
+
+##############################################################
+
+
+
+
+```
+
+I would like you to add a title to the plot obtained above.
+
+We need this package in order to calculate the Prediction Error Sum of Squares.
+
+```{r}
+install.packages("MPV")
+```
+
+
+```{r}
+library(MPV)
+```
+
+
+Let us examine the prediction sum of squares(Press) statistic and selecting the model that has the lowest value.
+
+```{r}
+
+PRESS(model2)#every quantitative predictor
+PRESS(bestsummary.fit1)#income+ufo2010
+PRESS(bestsummary.fit3)#income
+PRESS(bestsummary.fit2)#ufo
+
+############################################################################
+#in this case the squares press best model is model 2 at 63477705
+
+##########################################################################
+
+```
+
+
+#Other linear considerations
+Let us discuss first the inclusion of a quantitative variable and second the inclusion of an interaction term.
+
+
+```{r}
+finaldata<-read.csv("C:\\Users\\carlo\\Downloads\\finalexam.csv",header = TRUE,sep = ",")
+finaldata
+
+#################################################################
+#Here they are including region as a quantitative data and running as a factor. 
+
+##############################################################
+
+```
+
+
+```{r}
+install.packages("ISLR")
+```
+
+
+```{r}
+library(ISLR)
+```
+
+
+
+```{r}
+str(data)
+```
+
+
+```{r}
+qualitative.fit<-lm(infections~region+ufo2010,data = finaldata)
+summary(qualitative.fit)
+```
+
+
+
+
+```{r}
+incufo<-finaldata$ufo2010*finaldata$income
+
+#################################################################
+#here the author is normalizing the data income * ufo2010 and running a new regression below. 
+
+##############################################################
+
+
+```
+
+
+```{r}
+interaction.fit<-lm(infections~region+incufo,data = finaldata)
+summary(interaction.fit)
+```
+
+```{r}
+PRESS(qualitative.fit)
+PRESS(interaction.fit)
+#################################################################
+#Here are the interaction fit numbers running a qualitative adn quantitative regression. We will have to choose which model to use. 
+
+##############################################################
+
+
+
+```
+
+We would have to make a decision when it comes to the model we would like to use.
+

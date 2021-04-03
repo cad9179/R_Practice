@@ -1,0 +1,332 @@
+---
+title: "Getting Started with R,III"
+output: html_notebook
+Student: Carlos Diaz
+---
+
+ 
+
+*Material Adapted from "Statistics of One and Two Samples"" by M.J. Crawley*
+
+Source: [_"Statistics: An Introduction Using R"_](http://www.bio.ic.ac.uk/research/crawley/statistics/exercises/R3Statistics.pdf)
+
+Some concepts to disscuss before working on the handout: 
+
+1. Which of your variables is the _response_ variable?
+
+2. Which are the _explanatory_ variables?
+
+3. Are the explanatory variables _continuous or categorical_, or a mixture of both?
+
+4. What kind of response variable have you got: is it a continuous measurement, a count, a proportion, a time-at-death or a category ? 
+
+## Estimating Parameters from Data 
+
+Data have a number of important properties, and it is useful to be able to quantify the following attributes: 
+
+### Sample Size 
+In R, you find the size of a vector using `length(name)`.  The number of measurements of the response variable is known universally as $n$.
+
+### Central Tendency 
+Averages from repeated bouts of sampling show a remarkable tendency to cluster around the arithmetic mean (central limit theorem).
+
+The _mode_ is the most frequently represented class of data. The _median_ is the value of the response variable that lies in the middle of the ranked set of $y$ values.  It has the great advantage of not being sensitive to outliers.
+The (arithmetic) _mean_ is the sum of the observations divided by the sample size.
+
+
+### Measuring Variation
+
+A measure of variability is perhaps the most important quantity in statistical analysis. The greater the variability in the data, the greater will be our _uncertainty_ in the values of parameters estimated from the data, and the lower will be our ability to distinguish between competing hypotheses about the data. 
+
+Consider the following data, `y`, which are simply plotted in the order in which they were measured: 
+
+```{r}
+y <- c(13,7,5,12,9,15,6,1,9,7,12)
+# Plot data 
+plot(y, ylim = c(0,18)) 
+```
+
+
+Visual inspection indicates substantial variation in `y`. But how to measure it? One way would be to specify the range of `y` values. 
+
+```{r}
+range(y) 
+```
+
+The minimum value of `y` is 1 and the maximum is 15. The variability is contained within the range, and to that extent it is a very useful measure. But it is not ideal for general purposes. For one thing, it is totally determined by outliers, and gives us no indication of more typical levels of variation.
+
+
+How about fitting the average value of `y` through the data and measuring _how far_ each individual `y` value departs from the mean? 
+
+```{r}
+plot(y, ylim = c(0,18)) 
+# 2nd parameter says the slope of the fitted line is 0
+abline(mean(y),0)
+```
+
+This divides the data into 5 points that are larger than the mean and 7 points that are smaller than the mean. 
+ 
+
+
+The _sum of squares_ (differences) is the basis of all the measures of variability used in linear statistical analysis:
+
+$$
+\sum d^ 2 = \sum (y - \bar{y})^2
+$$
+
+
+We could not calculate $\sum d^2$ _before_ we knew the value of the mean $\bar{y}$. And how did we know the value of $\bar{y}$? Well we did not know the value, we estimated it from the data. This leads us into a very important concept: degrees of freedom.
+
+
+**Degrees of Freedom**: degrees of freedom (d.o.f) is the sample size, $n$, minus the number of parameters, $p$, estimated from the data. 
+
+In a _linear regression_ we estimate two parameters from the data when we fit the model:
+$y = mx + b$
+
+the intercept, $b$, and the slope $m$. Because we have estimated 2 parameters, we have $n-2$ d.o.f
+
+In a one way _analysis of variance_ with 5 genotypes, we estimate 5 means from
+the data (one for each genotype) so we have $n-5$ d.o.f. And so on.  
+
+
+
+**Variance**
+
+Variance, denoted by $s^2$, is defined as the _sum of squares_ divided by the number of _degrees of freedom_:
+
+$$
+s^2 = \frac{\sum (y - \bar{y})^2}{n-1}
+$$
+
+
+**_Example_**
+
+The data in the following table come from 3 market gardens. The data show the _ozone concentrations_ in parts per hundred million (`pphm`) on ten summer days. (hint:Create a csv file with the information listed in the table)
+
+Garden A  | Garden B  | Garden C
+----------|-----------|----------
+3         | 5         | 3
+4         | 5         | 3
+4         | 6         | 2
+3         | 7         | 1
+2         | 4         | 10
+3         | 4         | 4
+1         | 3         | 3
+3         | 5         | 11
+5         | 6         | 3
+2         | 5         | 10
+
+We want to calculate the _variance in ozone concentration for each garden_
+
+
+
+```{r}
+# Garden A
+A <- c(3,4,4,3,2,3,1,3,5,2) 
+# Garden B
+B <- c(5,5,6,7,4,4,3,5,6,5) 
+# Garden C
+C <- c(3,3,2,1,10,4,3,11,3,10) 
+```
+
+
+We can use the function `var()` to find the variance:
+
+```{r}
+s2A <- var(A)
+s2B <- var(B)
+s2C <- var(C)
+```
+
+
+
+```{r}
+# print the variances
+c(s2A, s2B, s2C)
+# print the means
+mean(A)
+mean(B)
+mean(C)
+```
+
+
+There are three important points to be made from this example:
+
+- two populations can have _different means but the same variance_ (Gardens A & B)
+
+- two populations can have the _same mean but different variances_ (Gardens B & C)
+
+Is it a bad idea comparing means when the variances are different?Explain.
+
+*******************************************************************************************
+In this case, If the two samples are normally distributed, but with unequal variances, the Welch t test can be used. Welch t-test is an adaptation of Student’s t test used when the equality of variances of the two samples cannot be assumed.
+
+********************************************************************************************
+
+
+
+
+
+```{r}
+ratio_CB <- s2C/s2B
+# is it bigger than 4 times the smaller variance?
+ratio_CB > 4*s2B
+```
+
+
+## Using Variance
+
+We can use variance in two main ways:
+
+- for establishing measures of unreliability
+- for testing hypotheses 
+
+
+Consider the properties that you would like a measure of unreliability to possess. 
+- As the variance of the data increases what would happen to unreliability of estimated parameters ? 
+- Would it go up or down ? 
+- Unreliability would go up as variance increased, so we would want to have the variance on the top of any divisions in our formula for unreliability (i.e. in the numerator). 
+
+$unreliability \propto s^2$
+
+
+What about _sample size_? 
+- Would you want your estimate of unreliability to go up or
+down as sample size, $n$, increased ? 
+- You would want unreliability to go down as sample size went up, so you would put sample size on the bottom of the formula for
+unreliability (i.e. in the denominator)
+
+$unreliability \propto \frac{s^2}{n}$
+
+
+
+
+Now consider the units in which unreliability is measured.
+What are the units in which our current measure are expressed? Sample size is dimensionless, but variance has dimensions of mean squared. So if the mean was a length in $cm$ the variance would be an area in $cm^2$. 
+
+It would make good sense to have the dimensions of the unreliability measure and the parameter whose unreliability it is measuring to be the
+same: 
+
+
+$$
+SE_{\bar{y}} = \sqrt{\frac{s^2}{n}}
+$$
+
+Unreliability measures are called _standard errors_. What we have just calculated is the standard error of the mean.
+
+We can easily calculate  calculate the standard errors of each of our market garden means: 
+
+```{r}
+sqrt(s2A/10) 
+sqrt(s2B/10) 
+sqrt(s2C/10) 
+```
+
+
+
+In written work one shows the unreliability of any estimated parameter in a formal, structured way like this:
+
+The mean ozone concentration in Garden A was $3.0 \pm 0.365$ (1 s.e., $n = 10$)
+
+You write plus or minus, then the unreliability measure then, in brackets, tell the reader what the unreliability measure is (in this case one standard error) and the size of the sample on which the parameter estimate was based (in this case, 10)). 
+
+
+
+A **confidence interval** shows the _likely range_ in which the mean would fall if the sampling exercise were to be repeated. It is pretty clear that the confidence interval will get wider as the unreliability goes up, so
+
+confidence interval $\propto \sqrt \frac{s^2}{n}$
+
+
+But what do we mean by _confidence_ ? 
+Ask yourself this question: would the interval be wider or narrower if we wanted to be more confident that our repeat sample mean falls inside the interval?
+
+You should be able to convince yourself that the more confident you want to be, the wider the interval will need to be. You can see this clearly by considering the limiting case of complete and absolute certainty. Nothing is certain in statistical science, so the interval would have to be infinitely wide. We can produce confidence intervals of different widths by specifying different _levels of confidence_. The higher the confidence, the wider the interval. 
+
+
+How exactly does this work? How do we turn the proportionality in the equation above into equality? 
+
+The answer is by resorting to an appropriate theoretical _distribution_. Suppose our sample size is too small to use the normal distribution ($n < 30$, as here), then we traditionally use Student's $t$ [distribution](http://mathworld.wolfram.com/Studentst-Distribution.html). 
+
+The values of Student's $t$ associated with different levels of confidence are tabulated but also available in the function `qt`, which gives the **quantiles** of the $t$ distribution. 
+
+Confidence intervals are 2-tailed; the parameter may be larger or smaller than our estimate of it. Thus, if we want to establish a 95% confidence interval we need to calculate Student's $t$ associated with $\alpha = 0.025$, that is, with $0.01 \times \frac{(100-95)}{2}$
+
+
+
+The value is found like this for the left (0.025) and right (0.975) hand tails: 
+
+```{r}
+qt(0.025,9)
+qt(0.975,9)
+```
+
+
+
+The first argument is the probability and the second is the degrees of freedom. This says that values as small as $-2.262$ standard errors below the mean are to be expected in 2.5% of cases ($p=0.025$), and values as large as $+2.262$ standard error above the mean with similar probability ($p=0.975$)
+
+
+
+Values of Student's $t$ are numbers of standard errors to be expected with specified probability and for a given number of degrees of freedom. The values of $t$ for 99% are bigger than these (0.005 in each tail): 
+
+```{r}
+qt(0.995, 9)
+```
+
+
+and the value for 99.5% bigger still (0.0025 in each tail): 
+
+```{r}
+qt(0.9975, 9)
+```
+
+
+Values of Student's $t$ like these appear in the formula for calculating the width of the confidence interval, and their inclusion is the reason why the width of the confidence interval goes up as our degree of confidence is increased. The other component of the formula, the standard error, is not affected by our choice of confidence level. So, finally, we can write down the formula for the confidence interval of a mean based on
+a small sample ($n < 30$):
+
+$$
+CI_{95\%} = t_{(\alpha = 0.025, d.o.f = n-1)} \times \sqrt \frac{s^2}{n}
+$$
+
+For Garden B, therefore, we could write 
+
+```{r}
+qt(0.975,9)*sqrt(1.33333/10) 
+```
+
+
+The mean ozone concentration in Garden B was $5.0 \pm 0.826$ (95% C.I., $n = 10$). 
+
+
+## Quantiles
+
+Quantiles are important summary statistics. They show the values of $y$ that are associated with specified percentage points of the distribution of the $y$ values. For instance, the 50% quantile is the same thing as the median. 
+
+The most commonly used quantiles are aimed at specifying the middle of a data set and the tails of a data set. By the middle of a data set we mean the values of $y$ between which the middle 50% of the numbers lie. That is to say, the values of $y$ that lie between the 25% and 75% quantiles. By the tails of a distribution we mean the extreme values of $y$: for example, we might define the tails of a distribution as the values that are smaller than the 2.5% quantile or larger than the 97.5% quantile.
+
+
+To see this, we can generate a vector called `z` containing 3000 random numbers drawn from a normal distribution using the function `rnorm()` with a mean of 0 and a standard deviation of 1 (i.e. the _standard normal distribution_)
+
+```{r}
+z <-rnorm(3000)
+```
+
+We can see how close the mean really is to 0
+
+```{r}
+mean(z)
+```
+
+But what about the tails of the distribution? We know that for an infinitely large sample, the [standard normal](https://www.mathsisfun.com/data/standard-normal-distribution-table.html) should have 2.5% of its `z` values less than -1.96, and 97.5% of its values less than +1.96
+
+
+So what is this sample of 3000 points like? We concatenate the two fractions 0.025 and 0.975 to make the second argument of quantile
+
+```{r}
+quantile(z,c(0.025,0.975)) 
+```
+
+What if we try with 10,000 numbers?
+
+```{r}
+z <- rnorm(10000)
+quantile(z,c(.025,.975))
